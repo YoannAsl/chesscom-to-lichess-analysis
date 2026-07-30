@@ -8,12 +8,10 @@ const CONTENT_SCRIPT_READY = "CONTENT_SCRIPT_READY";
 const OPEN_LICHESS_ANALYSIS = "OPEN_LICHESS_ANALYSIS";
 const CONTEXT_MENU_ID = "analyze-on-lichess";
 const SUPPORTED_PAGE_PATTERNS = [
-  "https://chess.com/game/live/*",
-  "https://chess.com/game/daily/*",
+  "https://chess.com/game/*",
   "https://chess.com/analysis/game/live/*",
   "https://chess.com/analysis/game/daily/*",
-  "https://www.chess.com/game/live/*",
-  "https://www.chess.com/game/daily/*",
+  "https://www.chess.com/game/*",
   "https://www.chess.com/analysis/game/live/*",
   "https://www.chess.com/analysis/game/daily/*",
 ];

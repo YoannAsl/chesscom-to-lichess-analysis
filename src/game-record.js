@@ -2,7 +2,7 @@
   "use strict";
 
   const SUPPORTED_GAME_PATH =
-    /^\/(?:game|analysis\/game)\/(?:live|daily)\/\d+(?:\/(?:review|analysis))?\/?$/;
+    /^\/(?:game\/(?:(?:live|daily)\/)?|analysis\/game\/(?:live|daily)\/)\d+(?:\/(?:review|analysis))?\/?$/;
 
   function isSupportedGameUrl(value) {
     try {

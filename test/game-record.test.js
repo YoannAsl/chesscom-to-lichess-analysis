@@ -17,6 +17,7 @@ const FINISHED_STANDARD_PGN = `[Event "Live Chess"]
 
 test("accepts normal, Game Review, and Self Analysis game URLs", () => {
   const supportedUrls = [
+    "https://www.chess.com/game/172278675618",
     "https://www.chess.com/game/live/172278675618",
     "https://www.chess.com/game/daily/123456789",
     "https://www.chess.com/analysis/game/live/172278675618/review",

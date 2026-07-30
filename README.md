@@ -16,6 +16,9 @@ The user can start the handoff from:
 - an **Analyze on Lichess** button beside Chess.com's Share control;
 - an **Analyze on Lichess** browser context-menu item.
 
+The page button stays hidden while a game is ongoing. It appears beside Share
+when Chess.com shows the finished game controls.
+
 Lichess opens in a new active tab. The source Chess.com tab stays open.
 
 ## Handoff

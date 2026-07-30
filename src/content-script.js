@@ -200,7 +200,11 @@
     }
 
     const shareControl = findShareControl();
-    if (!shareControl || existing) return;
+    if (!shareControl) {
+      existing?.remove();
+      return;
+    }
+    if (existing) return;
 
     const button = document.createElement("button");
     button.id = BUTTON_ID;

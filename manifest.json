@@ -8,12 +8,10 @@
     "scripting"
   ],
   "host_permissions": [
-    "https://chess.com/game/live/*",
-    "https://chess.com/game/daily/*",
+    "https://chess.com/game/*",
     "https://chess.com/analysis/game/live/*",
     "https://chess.com/analysis/game/daily/*",
-    "https://www.chess.com/game/live/*",
-    "https://www.chess.com/game/daily/*",
+    "https://www.chess.com/game/*",
     "https://www.chess.com/analysis/game/live/*",
     "https://www.chess.com/analysis/game/daily/*"
   ],
@@ -26,12 +24,10 @@
   "content_scripts": [
     {
       "matches": [
-        "https://chess.com/game/live/*",
-        "https://chess.com/game/daily/*",
+        "https://chess.com/game/*",
         "https://chess.com/analysis/game/live/*",
         "https://chess.com/analysis/game/daily/*",
-        "https://www.chess.com/game/live/*",
-        "https://www.chess.com/game/daily/*",
+        "https://www.chess.com/game/*",
         "https://www.chess.com/analysis/game/live/*",
         "https://www.chess.com/analysis/game/daily/*"
       ],

@@ -17,6 +17,8 @@ Check one finished standard live game and one finished standard Daily game.
 
 Run each action on a supported game.
 
+- [ ] The page button stays hidden while the game is ongoing.
+- [ ] The page button appears beside Share when the game finishes.
 - [ ] The toolbar icon starts a handoff.
 - [ ] The page shows **Analyze on Lichess** beside Share.
 - [ ] The page button starts a handoff.
