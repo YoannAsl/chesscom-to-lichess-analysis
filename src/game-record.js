@@ -85,10 +85,11 @@
     }
 
     const variant = headers.get("Variant");
-    const hasVariant = variant && variant.toLowerCase() !== "standard";
+    const hasNonStandardVariant =
+      variant && variant.toLowerCase() !== "standard";
     const hasCustomStart = headers.get("SetUp") === "1" || headers.has("FEN");
 
-    if (hasVariant || hasCustomStart) {
+    if (hasNonStandardVariant || hasCustomStart) {
       throw new Error("Only standard chess games can be analyzed.");
     }
 
@@ -97,6 +98,18 @@
     const headerEnd = lastHeader.index + lastHeader[0].length;
     const headerText = pgn.slice(0, headerEnd).trim();
     const moves = removeAnnotations(pgn.slice(headerEnd));
+
+    if (!moves) {
+      throw new Error("No game record was found.");
+    }
+
+    const moveResult = moves.match(/(?:^|\s)(1-0|0-1|1\/2-1\/2|\*)$/)?.[1];
+    if (moveResult === "*") {
+      throw new Error("The game must be finished.");
+    }
+    if (moveResult !== result) {
+      throw new Error("The game record is incomplete.");
+    }
 
     return `${headerText}\n\n${moves}`;
   }

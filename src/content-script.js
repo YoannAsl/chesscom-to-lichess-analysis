@@ -1,10 +1,14 @@
 (function () {
   "use strict";
 
+  if (globalThis.chesscomToLichessContentScriptLoaded) return;
+  globalThis.chesscomToLichessContentScriptLoaded = true;
+
   const { cleanGameRecord, createLichessAnalysisUrl, isSupportedGameUrl } =
     globalThis.ChesscomToLichess;
 
   const START_HANDOFF = "START_HANDOFF";
+  const CONTENT_SCRIPT_READY = "CONTENT_SCRIPT_READY";
   const OPEN_LICHESS_ANALYSIS = "OPEN_LICHESS_ANALYSIS";
   const BUTTON_ID = "chesscom-to-lichess-button";
   const MESSAGE_ID = "chesscom-to-lichess-message";
@@ -76,7 +80,7 @@
     });
   }
 
-  function showMessage(text, kind = "error") {
+  function showError(text) {
     clearTimeout(messageTimer);
 
     const previous = document.getElementById(MESSAGE_ID);
@@ -84,8 +88,7 @@
 
     const message = document.createElement("div");
     message.id = MESSAGE_ID;
-    message.dataset.kind = kind;
-    message.setAttribute("role", kind === "error" ? "alert" : "status");
+    message.setAttribute("role", "alert");
     message.textContent = text;
     document.body.append(message);
 
@@ -157,7 +160,7 @@
     if (handoffInProgress) return;
 
     if (!isSupportedGameUrl(location.href)) {
-      showMessage("Open a supported Chess.com game first.");
+      showError("Open a supported Chess.com game first.");
       return;
     }
 
@@ -178,7 +181,7 @@
         throw new Error("Lichess could not be opened.");
       }
     } catch (error) {
-      showMessage(
+      showError(
         error instanceof Error ? error.message : "The handoff failed.",
       );
     } finally {
@@ -213,7 +216,12 @@
     requestAnimationFrame(syncPageButton);
   }
 
-  chrome.runtime.onMessage.addListener((message) => {
+  chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+    if (message?.type === CONTENT_SCRIPT_READY) {
+      sendResponse({ ready: true });
+      return;
+    }
+
     if (message?.type === START_HANDOFF) {
       void startHandoff();
     }

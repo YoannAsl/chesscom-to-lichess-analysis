@@ -47,9 +47,17 @@ test("accepts a finished standard game record", () => {
 
 test("rejects an unfinished game record", () => {
   const ongoingPgn = FINISHED_STANDARD_PGN.replaceAll("1-0", "*");
+  const inconsistentPgn = FINISHED_STANDARD_PGN.replace(
+    "3. Bb5 a6 1-0",
+    "3. Bb5 a6 *",
+  );
 
   assert.throws(
     () => cleanGameRecord(ongoingPgn),
+    /game must be finished/i,
+  );
+  assert.throws(
+    () => cleanGameRecord(inconsistentPgn),
     /game must be finished/i,
   );
 });
@@ -87,4 +95,10 @@ test("encodes the clean game record in a Lichess analysis URL", () => {
     createLichessAnalysisUrl(FINISHED_STANDARD_PGN),
     `https://lichess.org/analysis/pgn/${encodeURIComponent(FINISHED_STANDARD_PGN)}`,
   );
+});
+
+test("rejects a game record with no moves", () => {
+  const headerOnlyPgn = FINISHED_STANDARD_PGN.split("\n\n")[0];
+
+  assert.throws(() => cleanGameRecord(headerOnlyPgn), /no game record/i);
 });

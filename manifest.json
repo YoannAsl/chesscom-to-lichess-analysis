@@ -4,7 +4,18 @@
   "version": "0.1.0",
   "description": "Open a finished Chess.com game in the Lichess analysis board.",
   "permissions": [
-    "contextMenus"
+    "contextMenus",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://chess.com/game/live/*",
+    "https://chess.com/game/daily/*",
+    "https://chess.com/analysis/game/live/*",
+    "https://chess.com/analysis/game/daily/*",
+    "https://www.chess.com/game/live/*",
+    "https://www.chess.com/game/daily/*",
+    "https://www.chess.com/analysis/game/live/*",
+    "https://www.chess.com/analysis/game/daily/*"
   ],
   "background": {
     "service_worker": "src/service-worker.js"

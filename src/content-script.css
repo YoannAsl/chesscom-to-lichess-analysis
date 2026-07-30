@@ -24,7 +24,7 @@
 }
 
 #chesscom-to-lichess-message {
-  background: #262522;
+  background: #b33430;
   border-radius: 0.4rem;
   bottom: 1.25rem;
   box-shadow: 0 0.25rem 1rem rgb(0 0 0 / 30%);
@@ -37,8 +37,4 @@
   text-align: center;
   transform: translateX(-50%);
   z-index: 2147483647;
-}
-
-#chesscom-to-lichess-message[data-kind="error"] {
-  background: #b33430;
 }
