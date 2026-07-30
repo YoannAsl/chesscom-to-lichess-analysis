@@ -61,3 +61,16 @@ The extension reads the current game only after a user action. It does not store
 Use Node's built-in test runner for the small pure-function test suite. Follow [the manual acceptance checklist](docs/acceptance-checklist.md) before calling the unpacked build ready.
 
 The project language lives in [CONTEXT.md](CONTEXT.md). Integration facts and sources live in [the research note](docs/research/browser-extension-integration.md).
+
+## Run locally
+
+1. Open `chrome://extensions` in Chrome or `edge://extensions` in Edge.
+2. Turn on developer mode.
+3. Choose **Load unpacked** and select this project folder.
+4. Open a supported finished Chess.com game.
+
+Run the automated checks with:
+
+```sh
+npm test
+```

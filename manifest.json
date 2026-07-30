@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "Chess.com to Lichess",
+  "version": "0.1.0",
+  "description": "Open a finished Chess.com game in the Lichess analysis board.",
+  "permissions": [
+    "contextMenus"
+  ],
+  "background": {
+    "service_worker": "src/service-worker.js"
+  },
+  "action": {
+    "default_title": "Analyze on Lichess"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chess.com/game/live/*",
+        "https://chess.com/game/daily/*",
+        "https://chess.com/analysis/game/live/*",
+        "https://chess.com/analysis/game/daily/*",
+        "https://www.chess.com/game/live/*",
+        "https://www.chess.com/game/daily/*",
+        "https://www.chess.com/analysis/game/live/*",
+        "https://www.chess.com/analysis/game/daily/*"
+      ],
+      "js": [
+        "src/game-record.js",
+        "src/content-script.js"
+      ],
+      "css": [
+        "src/content-script.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
