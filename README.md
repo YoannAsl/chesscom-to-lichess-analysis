@@ -21,6 +21,13 @@ when Chess.com shows the finished game controls.
 
 Lichess opens in a new active tab. The source Chess.com tab stays open.
 
+## Settings
+
+Open the extension's options and save your Chess.com username. When that
+username matches the White or Black player in a game, Lichess shows that side
+at the bottom of the board. An empty or unmatched username keeps Lichess's
+default view.
+
 ## Handoff
 
 1. Check that the current URL is a known Chess.com game route.
@@ -29,8 +36,9 @@ Lichess opens in a new active tab. The source Chess.com tab stays open.
 4. Read the PGN, then close the Share panel.
 5. Reject a game whose result is `*`, whose rules are not standard chess, or whose PGN is missing.
 6. Remove Chess.com review notes, annotations, and clock data if present.
-7. Open `https://lichess.org/analysis/pgn/{encoded PGN}` in a new active tab.
-8. Show a short on-page error and open no tab when a check fails.
+7. Match the saved Chess.com username to the White or Black player when possible.
+8. Open `https://lichess.org/analysis/pgn/{encoded PGN}` in a new active tab, with the matching side at the bottom.
+9. Show a short on-page error and open no tab when a check fails.
 
 The Share panel may appear for a moment during the handoff.
 
@@ -38,7 +46,8 @@ The Share panel may appear for a moment during the handoff.
 
 - Manifest V3 for Chrome and Edge.
 - Plain modern JavaScript.
-- No build step, framework, server, settings page, or remote report service.
+- No build step, framework, server, or remote report service.
+- A small options page stores the user's Chess.com username in browser sync storage.
 - A content script owns the page button, PGN read, checks, and on-page messages.
 - A service worker owns the toolbar and context-menu actions.
 - Pure functions own URL checks, PGN checks, cleanup, and Lichess URL creation.
@@ -48,7 +57,7 @@ The extension needs access only to the supported Chess.com routes and the browse
 
 ## Data
 
-The extension reads the current game only after a user action. It does not store games, settings, usage data, or error reports. It sends the game record only to Lichess as part of the analysis URL.
+The extension reads the current game only after a user action. It stores the Chess.com username entered in its options, using browser sync storage. It does not store games, usage data, or error reports. It sends the game record only to Lichess as part of the analysis URL.
 
 ## Not in version one
 

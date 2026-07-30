@@ -5,7 +5,8 @@
   "description": "Open a finished Chess.com game in the Lichess analysis board.",
   "permissions": [
     "contextMenus",
-    "scripting"
+    "scripting",
+    "storage"
   ],
   "host_permissions": [
     "https://chess.com/game/*",
@@ -20,6 +21,10 @@
   },
   "action": {
     "default_title": "Analyze on Lichess"
+  },
+  "options_ui": {
+    "page": "src/options.html",
+    "open_in_tab": false
   },
   "content_scripts": [
     {

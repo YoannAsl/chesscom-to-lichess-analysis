@@ -4,8 +4,12 @@
   if (globalThis.chesscomToLichessContentScriptLoaded) return;
   globalThis.chesscomToLichessContentScriptLoaded = true;
 
-  const { cleanGameRecord, createLichessAnalysisUrl, isSupportedGameUrl } =
-    globalThis.ChesscomToLichess;
+  const {
+    cleanGameRecord,
+    createLichessAnalysisUrl,
+    findPlayerColor,
+    isSupportedGameUrl,
+  } = globalThis.ChesscomToLichess;
 
   const START_HANDOFF = "START_HANDOFF";
   const CONTENT_SCRIPT_READY = "CONTENT_SCRIPT_READY";
@@ -171,7 +175,11 @@
     try {
       const pgn = await readGameRecordFromSharePanel();
       const cleanPgn = cleanGameRecord(pgn);
-      const url = createLichessAnalysisUrl(cleanPgn);
+      const settings = await chrome.storage.sync
+        .get({ chessComUsername: "" })
+        .catch(() => ({ chessComUsername: "" }));
+      const color = findPlayerColor(cleanPgn, settings.chessComUsername);
+      const url = createLichessAnalysisUrl(cleanPgn, color);
 
       const response = await chrome.runtime.sendMessage({
         type: OPEN_LICHESS_ANALYSIS,

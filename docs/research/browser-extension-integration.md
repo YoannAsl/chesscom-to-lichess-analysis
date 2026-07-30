@@ -17,15 +17,34 @@ Source:
 
 Lichess has a public GET route at `/analysis/pgn/*pgn`. Opening a URL-encoded PGN through this route loads it in the analysis board without using the game-import flow.
 
+The same route accepts a `color` query parameter. Its controller reads `getColor()` before it builds the analysis data, including in the `pgn` action. The extension can therefore open:
+
+```text
+https://lichess.org/analysis/pgn/<encoded-pgn>?color=black
+```
+
+Use `white` or `black` for the side that should appear at the bottom.
+
 Source:
 
 - [Lichess application routes](https://github.com/lichess-org/lila/blob/master/conf/routes)
+- [Lichess `UserAnalysis.pgn` controller](https://github.com/lichess-org/lila/blob/master/app/controllers/UserAnalysis.scala#L54-L66)
 - [Lichess analysis board](https://lichess.org/analysis)
 - [Lichess game import](https://lichess.org/paste)
 
 ## Browser extension
 
 A Manifest V3 content script can add the page button and read the Chess.com page. A service worker can handle the toolbar and context-menu actions. Static content-script match patterns keep site access limited to Chess.com game and analysis routes.
+
+### Board orientation
+
+This is possible, with one limit: the PGN identifies the White and Black players, but it does not identify which one is the signed-in Chess.com user. The extension therefore asks the user for their Chess.com username in its options. It compares the saved username with the PGN's `White` and `Black` headers, then passes the matching color to Lichess.
+
+This avoids relying on Chess.com's undocumented page structure. A missing or unmatched username means “orientation unknown”, so the extension keeps Lichess's default orientation.
+
+Source:
+
+- [Chess.com PGN fields, including `White` and `Black`](https://support.chess.com/en/articles/8598397-what-are-pgn-fen)
 
 Source:
 

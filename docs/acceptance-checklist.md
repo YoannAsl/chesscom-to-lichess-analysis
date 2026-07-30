@@ -26,6 +26,13 @@ Run each action on a supported game.
 - [ ] The context-menu item starts a handoff.
 - [ ] Repeated clicks during a handoff open only one Lichess tab.
 
+## Settings and orientation
+
+- [ ] The extension options save and restore a Chess.com username.
+- [ ] A game where that username is White opens with White at the bottom.
+- [ ] A game where that username is Black opens with Black at the bottom.
+- [ ] An empty or unmatched username keeps Lichess's default orientation.
+
 ## Result
 
 - [ ] Chess.com's Share panel closes after the PGN is read.
@@ -51,3 +58,5 @@ Run each action on a supported game.
 - [ ] Remove annotations and clock data from a PGN.
 - [ ] Preserve required headers, result, and moves.
 - [ ] Encode the clean PGN in the Lichess analysis URL.
+- [ ] Match the configured username to White and Black without case sensitivity.
+- [ ] Add the matched color to the Lichess analysis URL.

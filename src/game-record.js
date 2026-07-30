@@ -114,13 +114,36 @@
     return `${headerText}\n\n${moves}`;
   }
 
-  function createLichessAnalysisUrl(cleanPgn) {
-    return `https://lichess.org/analysis/pgn/${encodeURIComponent(cleanPgn)}`;
+  function findPlayerColor(pgn, username) {
+    if (typeof username !== "string" || username.trim() === "") {
+      return undefined;
+    }
+
+    const headers = readHeaders(pgn);
+    const normalizedUsername = username.trim().toLowerCase();
+
+    if (headers.get("White")?.toLowerCase() === normalizedUsername) {
+      return "white";
+    }
+    if (headers.get("Black")?.toLowerCase() === normalizedUsername) {
+      return "black";
+    }
+
+    return undefined;
+  }
+
+  function createLichessAnalysisUrl(cleanPgn, color) {
+    const analysisUrl = `https://lichess.org/analysis/pgn/${encodeURIComponent(cleanPgn)}`;
+
+    return color === "white" || color === "black"
+      ? `${analysisUrl}?color=${color}`
+      : analysisUrl;
   }
 
   const api = Object.freeze({
     cleanGameRecord,
     createLichessAnalysisUrl,
+    findPlayerColor,
     isSupportedGameUrl,
   });
 

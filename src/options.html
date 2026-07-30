@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chess.com to Lichess settings</title>
+    <link rel="stylesheet" href="options.css" />
+    <script src="options.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <h1>Chess.com to Lichess</h1>
+      <form>
+        <label for="chess-com-username">Chess.com username</label>
+        <input
+          id="chess-com-username"
+          name="chessComUsername"
+          type="text"
+          autocomplete="username"
+          spellcheck="false"
+        />
+        <p>
+          Games on Lichess will show your side at the bottom. Leave this empty
+          to use Lichess's default view.
+        </p>
+        <button type="submit">Save</button>
+        <span id="save-status" role="status" aria-live="polite"></span>
+      </form>
+    </main>
+  </body>
+</html>
