@@ -22,6 +22,11 @@ Run each action on a supported game.
 - [ ] The toolbar icon starts a handoff.
 - [ ] The page shows **Analyze on Lichess** beside Share.
 - [ ] The page button starts a handoff.
+- [ ] The page shows **Review the game on Lichess** beside Share.
+- [ ] The review button copies the cleaned PGN to the clipboard.
+- [ ] The review button fills Lichess's PGN textarea.
+- [ ] The review button selects **Request a computer analysis**.
+- [ ] The review button clicks **Import game**.
 - [ ] The browser context menu shows **Analyze on Lichess**.
 - [ ] The context-menu item starts a handoff.
 - [ ] Repeated clicks during a handoff open only one Lichess tab.
@@ -39,7 +44,7 @@ Run each action on a supported game.
 - [ ] A new active Lichess tab opens.
 - [ ] The Chess.com tab stays open.
 - [ ] Lichess shows the correct players, result, and full move list.
-- [ ] The add-on does not switch on the Lichess engine.
+- [ ] The review flow requests computer analysis.
 
 ## Rejections
 
@@ -57,6 +62,6 @@ Run each action on a supported game.
 - [ ] Reject variant and non-standard starting-position PGNs.
 - [ ] Remove annotations and clock data from a PGN.
 - [ ] Preserve required headers, result, and moves.
-- [ ] Encode the clean PGN in the Lichess analysis URL.
+- [ ] Encode the clean PGN in the Lichess analysis URL for the Analyze action.
 - [ ] Match the configured username to White and Black without case sensitivity.
 - [ ] Add the matched color to the Lichess analysis URL.

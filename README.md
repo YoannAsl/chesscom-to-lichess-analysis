@@ -1,6 +1,6 @@
 # Chess.com to Lichess
 
-A small Chrome and Edge extension that opens a finished Chess.com game in the Lichess analysis board.
+A small Chrome and Edge extension that sends a finished Chess.com game to Lichess for analysis or review.
 
 ## Version one
 
@@ -14,6 +14,7 @@ The user can start the handoff from:
 
 - the extension toolbar icon;
 - an **Analyze on Lichess** button beside Chess.com's Share control;
+- a **Review the game on Lichess** button beside Chess.com's Share control;
 - an **Analyze on Lichess** browser context-menu item.
 
 The page button stays hidden while a game is ongoing. It appears beside Share
@@ -28,7 +29,7 @@ username matches the White or Black player in a game, Lichess shows that side
 at the bottom of the board. An empty or unmatched username keeps Lichess's
 default view.
 
-## Handoff
+## Analysis handoff
 
 1. Check that the current URL is a known Chess.com game route.
 2. Prevent a second handoff while the first one runs.
@@ -42,6 +43,20 @@ default view.
 
 The Share panel may appear for a moment during the handoff.
 
+## Review handoff
+
+The **Review the game on Lichess** page button follows the same checks and cleanup,
+then:
+
+1. Copy the cleaned PGN to the clipboard.
+2. Open `https://lichess.org/paste` in a new active tab.
+3. Fill the PGN textarea.
+4. Select **Request a computer analysis**.
+5. Click **Import game**.
+
+The extension keeps the PGN in temporary extension session storage only until the
+Lichess paste page receives it.
+
 ## Technical shape
 
 - Manifest V3 for Chrome and Edge.
@@ -49,22 +64,22 @@ The Share panel may appear for a moment during the handoff.
 - No build step, framework, server, or remote report service.
 - A small options page stores the user's Chess.com username in browser sync storage.
 - A content script owns the page button, PGN read, checks, and on-page messages.
+- A Lichess content script fills the paste form and starts the import flow.
 - A service worker owns the toolbar and context-menu actions.
 - Pure functions own URL checks, PGN checks, cleanup, and Lichess URL creation.
-- A page observer handles Chess.com's page changes without a full reload.
+- Page observers handle Chess.com's page changes without a full reload.
 
-The extension needs access only to the supported Chess.com routes and the browser context-menu feature. It does not need access to Lichess because it only opens a URL there.
+The extension needs access to the supported Chess.com routes, the Lichess paste
+page, the clipboard, and the browser context-menu feature.
 
 ## Data
 
-The extension reads the current game only after a user action. It stores the Chess.com username entered in its options, using browser sync storage. It does not store games, usage data, or error reports. It sends the game record only to Lichess as part of the analysis URL.
+The extension reads the current game only after a user action. It stores the Chess.com username entered in its options, using browser sync storage. For review, it copies the cleaned PGN to the clipboard and keeps one temporary copy in extension session storage while the Lichess paste page loads. It does not store games, usage data, or error reports.
 
 ## Not in version one
 
 - Ongoing games.
 - Chess variants, including Chess960.
-- Automatic Lichess engine control.
-- Lichess imports, studies, or cloud analysis requests.
 - Chrome Web Store assets or submission.
 - Full browser test automation.
 

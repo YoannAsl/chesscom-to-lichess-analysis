@@ -1,4 +1,5 @@
-#chesscom-to-lichess-button {
+#chesscom-to-lichess-button,
+#chesscom-to-lichess-review-button {
   align-items: center;
   background: #81b64c;
   border: 1px solid #9acb67;
@@ -16,16 +17,19 @@
   text-shadow: 0 1px 1px rgb(0 0 0 / 35%);
 }
 
-#chesscom-to-lichess-button:hover {
+#chesscom-to-lichess-button:hover,
+#chesscom-to-lichess-review-button:hover {
   background: #95c95d;
 }
 
-#chesscom-to-lichess-button:focus-visible {
+#chesscom-to-lichess-button:focus-visible,
+#chesscom-to-lichess-review-button:focus-visible {
   outline: 2px solid #fff;
   outline-offset: 2px;
 }
 
-#chesscom-to-lichess-button:disabled {
+#chesscom-to-lichess-button:disabled,
+#chesscom-to-lichess-review-button:disabled {
   cursor: wait;
   opacity: 0.6;
 }

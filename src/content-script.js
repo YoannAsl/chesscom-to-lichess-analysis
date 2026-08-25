@@ -14,7 +14,9 @@
   const START_HANDOFF = "START_HANDOFF";
   const CONTENT_SCRIPT_READY = "CONTENT_SCRIPT_READY";
   const OPEN_LICHESS_ANALYSIS = "OPEN_LICHESS_ANALYSIS";
+  const OPEN_LICHESS_IMPORT = "OPEN_LICHESS_IMPORT";
   const BUTTON_ID = "chesscom-to-lichess-button";
+  const REVIEW_BUTTON_ID = "chesscom-to-lichess-review-button";
   const MESSAGE_ID = "chesscom-to-lichess-message";
   const WAIT_TIMEOUT_MS = 5_000;
   const MESSAGE_DURATION_MS = 4_000;
@@ -99,6 +101,34 @@
     messageTimer = setTimeout(() => message.remove(), MESSAGE_DURATION_MS);
   }
 
+  async function copyPgnToClipboard(pgn) {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(pgn);
+        return;
+      }
+    } catch {}
+
+    const textArea = document.createElement("textarea");
+    textArea.value = pgn;
+    textArea.setAttribute("readonly", "");
+    textArea.style.position = "fixed";
+    textArea.style.opacity = "0";
+    document.body.append(textArea);
+    textArea.select();
+
+    let copied = false;
+    try {
+      copied = document.execCommand("copy");
+    } finally {
+      textArea.remove();
+    }
+
+    if (!copied) {
+      throw new Error("The PGN could not be copied to the clipboard.");
+    }
+  }
+
   function findSharePanel(element) {
     return element?.closest(
       '[role="dialog"], [aria-modal="true"], dialog, .modal-content',
@@ -169,8 +199,7 @@
     }
 
     handoffInProgress = true;
-    const pageButton = document.getElementById(BUTTON_ID);
-    if (pageButton) pageButton.disabled = true;
+    setPageButtonsDisabled(true);
 
     try {
       const pgn = await readGameRecordFromSharePanel();
@@ -194,38 +223,97 @@
       );
     } finally {
       handoffInProgress = false;
-      if (pageButton?.isConnected) pageButton.disabled = false;
+      setPageButtonsDisabled(false);
     }
   }
 
-  function syncPageButton() {
-    syncScheduled = false;
-    const existing = document.getElementById(BUTTON_ID);
+  async function startReview() {
+    if (handoffInProgress) return;
 
     if (!isSupportedGameUrl(location.href)) {
-      existing?.remove();
+      showError("Open a supported Chess.com game first.");
+      return;
+    }
+
+    handoffInProgress = true;
+    setPageButtonsDisabled(true);
+
+    try {
+      const pgn = await readGameRecordFromSharePanel();
+      const cleanPgn = cleanGameRecord(pgn);
+      await copyPgnToClipboard(cleanPgn);
+
+      const response = await chrome.runtime.sendMessage({
+        type: OPEN_LICHESS_IMPORT,
+        pgn: cleanPgn,
+      });
+      if (!response?.opened) {
+        throw new Error("Lichess could not be opened.");
+      }
+    } catch (error) {
+      showError(
+        error instanceof Error ? error.message : "The review handoff failed.",
+      );
+    } finally {
+      handoffInProgress = false;
+      setPageButtonsDisabled(false);
+    }
+  }
+
+  function setPageButtonsDisabled(disabled) {
+    for (const id of [BUTTON_ID, REVIEW_BUTTON_ID]) {
+      const button = document.getElementById(id);
+      if (button) button.disabled = disabled;
+    }
+  }
+
+  function createPageButton(id, text, handler) {
+    const button = document.createElement("button");
+    button.id = id;
+    button.type = "button";
+    button.textContent = text;
+    button.addEventListener("click", handler);
+    return button;
+  }
+
+  function syncPageButtons() {
+    syncScheduled = false;
+
+    if (!isSupportedGameUrl(location.href)) {
+      document.getElementById(BUTTON_ID)?.remove();
+      document.getElementById(REVIEW_BUTTON_ID)?.remove();
       return;
     }
 
     const shareControl = findShareControl();
     if (!shareControl) {
-      existing?.remove();
+      document.getElementById(BUTTON_ID)?.remove();
+      document.getElementById(REVIEW_BUTTON_ID)?.remove();
       return;
     }
-    if (existing) return;
 
-    const button = document.createElement("button");
-    button.id = BUTTON_ID;
-    button.type = "button";
-    button.textContent = "Analyze on Lichess";
-    button.addEventListener("click", startHandoff);
-    shareControl.insertAdjacentElement("afterend", button);
+    if (!document.getElementById(BUTTON_ID)) {
+      shareControl.insertAdjacentElement(
+        "afterend",
+        createPageButton(BUTTON_ID, "Analyze on Lichess", startHandoff),
+      );
+    }
+    if (!document.getElementById(REVIEW_BUTTON_ID)) {
+      shareControl.insertAdjacentElement(
+        "afterend",
+        createPageButton(
+          REVIEW_BUTTON_ID,
+          "Review on Lichess",
+          startReview,
+        ),
+      );
+    }
   }
 
   function schedulePageButtonSync() {
     if (syncScheduled) return;
     syncScheduled = true;
-    requestAnimationFrame(syncPageButton);
+    requestAnimationFrame(syncPageButtons);
   }
 
   chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {

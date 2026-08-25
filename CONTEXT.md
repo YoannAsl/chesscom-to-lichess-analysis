@@ -27,3 +27,7 @@ _Avoid_: Any game
 **Analysis handoff**:
 A user-triggered transfer that reads a supported game's game record and opens it in a new, active Lichess analysis tab without storing it.
 _Avoid_: Import, sync
+
+**Review handoff**:
+A user-triggered transfer that reads a supported game's game record, copies it, and uses Lichess's paste form to request computer analysis.
+_Avoid_: Sync

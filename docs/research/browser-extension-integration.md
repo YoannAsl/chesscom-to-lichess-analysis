@@ -17,6 +17,11 @@ Source:
 
 Lichess has a public GET route at `/analysis/pgn/*pgn`. Opening a URL-encoded PGN through this route loads it in the analysis board without using the game-import flow.
 
+The live `/paste` page also exposes a PGN textarea, a `Request a computer
+analysis` checkbox, and an `Import game` button. The review button uses a
+Lichess content script to fill these controls and submit the form after the
+service worker opens the page.
+
 The same route accepts a `color` query parameter. Its controller reads `getColor()` before it builds the analysis data, including in the `pgn` action. The extension can therefore open:
 
 ```text

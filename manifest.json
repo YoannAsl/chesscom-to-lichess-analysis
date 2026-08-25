@@ -2,9 +2,10 @@
   "manifest_version": 3,
   "name": "Chess.com to Lichess",
   "version": "0.1.0",
-  "description": "Open a finished Chess.com game in the Lichess analysis board.",
+  "description": "Analyze or review a finished Chess.com game on Lichess.",
   "permissions": [
     "contextMenus",
+    "clipboardWrite",
     "scripting",
     "storage"
   ],
@@ -14,7 +15,8 @@
     "https://chess.com/analysis/game/daily/*",
     "https://www.chess.com/game/*",
     "https://www.chess.com/analysis/game/live/*",
-    "https://www.chess.com/analysis/game/daily/*"
+    "https://www.chess.com/analysis/game/daily/*",
+    "https://lichess.org/paste*"
   ],
   "background": {
     "service_worker": "src/service-worker.js"
@@ -42,6 +44,15 @@
       ],
       "css": [
         "src/content-script.css"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://lichess.org/paste*"
+      ],
+      "js": [
+        "src/lichess-paste.js"
       ],
       "run_at": "document_idle"
     }

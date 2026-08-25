@@ -6,7 +6,11 @@ const { isSupportedGameUrl } = globalThis.ChesscomToLichess;
 const START_HANDOFF = "START_HANDOFF";
 const CONTENT_SCRIPT_READY = "CONTENT_SCRIPT_READY";
 const OPEN_LICHESS_ANALYSIS = "OPEN_LICHESS_ANALYSIS";
+const OPEN_LICHESS_IMPORT = "OPEN_LICHESS_IMPORT";
+const LICHESS_PASTE_READY = "LICHESS_PASTE_READY";
 const CONTEXT_MENU_ID = "analyze-on-lichess";
+const LICHESS_PASTE_URL = "https://lichess.org/paste";
+const PENDING_IMPORT_KEY_PREFIX = "pendingLichessImport:";
 const SUPPORTED_PAGE_PATTERNS = [
   "https://chess.com/game/*",
   "https://chess.com/analysis/game/live/*",
@@ -83,5 +87,57 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     return true;
   }
 
+  if (
+    message?.type === OPEN_LICHESS_IMPORT &&
+    typeof message.pgn === "string" &&
+    message.pgn.trim() !== ""
+  ) {
+    (async () => {
+      try {
+        const tab = await chrome.tabs.create({
+          url: LICHESS_PASTE_URL,
+          active: true,
+        });
+        if (!tab.id) throw new Error("The Lichess tab has no ID.");
+
+        await chrome.storage.session.set({
+          [pendingImportKey(tab.id)]: message.pgn,
+        });
+        sendResponse({ opened: true });
+      } catch {
+        sendResponse({ opened: false });
+      }
+    })();
+    return true;
+  }
+
+  if (message?.type === LICHESS_PASTE_READY && _sender.tab?.id) {
+    (async () => {
+      try {
+        const result = await chrome.storage.session.get(
+          pendingImportKey(_sender.tab.id),
+        );
+        const pgn = result[pendingImportKey(_sender.tab.id)];
+        if (typeof pgn === "string") {
+          await chrome.storage.session.remove(pendingImportKey(_sender.tab.id));
+        }
+        sendResponse({
+          pgn: pgn || undefined,
+        });
+      } catch {
+        sendResponse({});
+      }
+    })();
+    return true;
+  }
+
   return false;
+});
+
+function pendingImportKey(tabId) {
+  return `${PENDING_IMPORT_KEY_PREFIX}${tabId}`;
+}
+
+chrome.tabs.onRemoved.addListener((tabId) => {
+  void chrome.storage.session.remove(pendingImportKey(tabId));
 });
