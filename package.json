@@ -1,8 +1,8 @@
 {
-  "name": "chesscom-to-lichess",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "test": "node --test"
-  }
+    "name": "chesscom-to-lichess-analysis",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "test": "node --test"
+    }
 }

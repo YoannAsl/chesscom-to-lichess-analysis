@@ -1,0 +1,50 @@
+name: Package extension
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run tests
+        run: npm test
+
+      - name: Read extension version
+        id: extension
+        shell: bash
+        run: echo "version=$(node -p \"require('./manifest.json').version\")" >> "$GITHUB_OUTPUT"
+
+      - name: Create Chrome Web Store zip
+        shell: bash
+        run: |
+          package_dir="extension"
+          zip_name="chesscom-to-lichess-analysis-${{ steps.extension.outputs.version }}.zip"
+
+          mkdir "$package_dir"
+          cp manifest.json "$package_dir/"
+          cp -R src "$package_dir/"
+
+          (cd "$package_dir" && zip -r "../$zip_name" .)
+
+      - name: Upload extension zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: chesscom-to-lichess-analysis-${{ steps.extension.outputs.version }}
+          path: chesscom-to-lichess-analysis-${{ steps.extension.outputs.version }}.zip
+          if-no-files-found: error
