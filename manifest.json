@@ -16,7 +16,7 @@
     "https://www.chess.com/game/*",
     "https://www.chess.com/analysis/game/live/*",
     "https://www.chess.com/analysis/game/daily/*",
-    "https://lichess.org/paste*"
+    "https://lichess.org/*"
   ],
   "background": {
     "service_worker": "src/service-worker.js"

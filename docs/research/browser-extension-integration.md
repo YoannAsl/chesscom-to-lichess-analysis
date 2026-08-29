@@ -22,6 +22,11 @@ analysis` checkbox, and an `Import game` button. The review button uses a
 Lichess content script to fill these controls and submit the form after the
 service worker opens the page.
 
+The import form redirects to the new game with White as the default
+orientation. The service worker keeps a temporary Black orientation marker for
+the import tab, reads the new game URL, and redirects it to the same game with
+`/black` when the configured Chess.com username is Black.
+
 The same route accepts a `color` query parameter. Its controller reads `getColor()` before it builds the analysis data, including in the `pgn` action. The extension can therefore open:
 
 ```text

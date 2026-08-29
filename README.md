@@ -53,6 +53,8 @@ then:
 3. Fill the PGN textarea.
 4. Select **Request a computer analysis**.
 5. Click **Import game**.
+6. Open the imported game with the configured player's side at the bottom when
+   the player is known.
 
 The extension keeps the PGN in temporary extension session storage only until the
 Lichess paste page receives it.
@@ -70,7 +72,7 @@ Lichess paste page receives it.
 - Page observers handle Chess.com's page changes without a full reload.
 
 The extension needs access to the supported Chess.com routes, the Lichess paste
-page, the clipboard, and the browser context-menu feature.
+and imported-game pages, the clipboard, and the browser context-menu feature.
 
 ## Data
 

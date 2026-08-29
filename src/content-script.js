@@ -129,6 +129,14 @@
     }
   }
 
+  async function findConfiguredPlayerColor(pgn) {
+    const settings = await chrome.storage.sync
+      .get({ chessComUsername: "" })
+      .catch(() => ({ chessComUsername: "" }));
+
+    return findPlayerColor(pgn, settings.chessComUsername);
+  }
+
   function findSharePanel(element) {
     return element?.closest(
       '[role="dialog"], [aria-modal="true"], dialog, .modal-content',
@@ -204,10 +212,7 @@
     try {
       const pgn = await readGameRecordFromSharePanel();
       const cleanPgn = cleanGameRecord(pgn);
-      const settings = await chrome.storage.sync
-        .get({ chessComUsername: "" })
-        .catch(() => ({ chessComUsername: "" }));
-      const color = findPlayerColor(cleanPgn, settings.chessComUsername);
+      const color = await findConfiguredPlayerColor(cleanPgn);
       const url = createLichessAnalysisUrl(cleanPgn, color);
 
       const response = await chrome.runtime.sendMessage({
@@ -242,10 +247,12 @@
       const pgn = await readGameRecordFromSharePanel();
       const cleanPgn = cleanGameRecord(pgn);
       await copyPgnToClipboard(cleanPgn);
+      const color = await findConfiguredPlayerColor(cleanPgn);
 
       const response = await chrome.runtime.sendMessage({
         type: OPEN_LICHESS_IMPORT,
         pgn: cleanPgn,
+        color,
       });
       if (!response?.opened) {
         throw new Error("Lichess could not be opened.");

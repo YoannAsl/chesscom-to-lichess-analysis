@@ -11,6 +11,9 @@ const LICHESS_PASTE_READY = "LICHESS_PASTE_READY";
 const CONTEXT_MENU_ID = "analyze-on-lichess";
 const LICHESS_PASTE_URL = "https://lichess.org/paste";
 const PENDING_IMPORT_KEY_PREFIX = "pendingLichessImport:";
+const PENDING_IMPORT_ORIENTATION_KEY_PREFIX =
+  "pendingLichessImportOrientation:";
+const orientationRedirectsInProgress = new Set();
 const SUPPORTED_PAGE_PATTERNS = [
   "https://chess.com/game/*",
   "https://chess.com/analysis/game/live/*",
@@ -69,9 +72,11 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
-  if (changeInfo.url && isSupportedGameUrl(changeInfo.url)) {
-    void ensureContentScript(tabId);
-  }
+  if (!changeInfo.url) return;
+
+  void orientImportedGame(tabId, changeInfo.url);
+
+  if (isSupportedGameUrl(changeInfo.url)) void ensureContentScript(tabId);
 });
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
@@ -101,7 +106,10 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         if (!tab.id) throw new Error("The Lichess tab has no ID.");
 
         await chrome.storage.session.set({
-          [pendingImportKey(tab.id)]: message.pgn,
+          [pendingImportKey(tab.id)]: {
+            pgn: message.pgn,
+            color: normalizeColor(message.color),
+          },
         });
         sendResponse({ opened: true });
       } catch {
@@ -117,9 +125,19 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         const result = await chrome.storage.session.get(
           pendingImportKey(_sender.tab.id),
         );
-        const pgn = result[pendingImportKey(_sender.tab.id)];
+        const pending = result[pendingImportKey(_sender.tab.id)];
+        const pgn = typeof pending === "string" ? pending : pending?.pgn;
+        const color =
+          typeof pending === "object" && pending
+            ? normalizeColor(pending.color)
+            : undefined;
         if (typeof pgn === "string") {
           await chrome.storage.session.remove(pendingImportKey(_sender.tab.id));
+          if (color === "black") {
+            await chrome.storage.session.set({
+              [pendingImportOrientationKey(_sender.tab.id)]: color,
+            });
+          }
         }
         sendResponse({
           pgn: pgn || undefined,
@@ -138,6 +156,64 @@ function pendingImportKey(tabId) {
   return `${PENDING_IMPORT_KEY_PREFIX}${tabId}`;
 }
 
+function pendingImportOrientationKey(tabId) {
+  return `${PENDING_IMPORT_ORIENTATION_KEY_PREFIX}${tabId}`;
+}
+
+function normalizeColor(color) {
+  return color === "white" || color === "black" ? color : undefined;
+}
+
+function importedGameId(value) {
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "https:" || url.hostname !== "lichess.org") {
+      return undefined;
+    }
+
+    const path = url.pathname.split("/").filter(Boolean);
+    if (
+      path.length === 1 &&
+      /^\w{8}$/.test(path[0])
+    ) {
+      return path[0];
+    }
+    if (
+      path.length === 2 &&
+      /^\w{8}$/.test(path[0]) &&
+      path[1] === "white"
+    ) {
+      return path[0];
+    }
+  } catch {}
+
+  return undefined;
+}
+
+async function orientImportedGame(tabId, url) {
+  const gameId = importedGameId(url);
+  if (!gameId) return;
+  if (orientationRedirectsInProgress.has(tabId)) return;
+
+  orientationRedirectsInProgress.add(tabId);
+
+  try {
+    const key = pendingImportOrientationKey(tabId);
+    const result = await chrome.storage.session.get(key);
+    if (result[key] !== "black") return;
+
+    await chrome.tabs.update(tabId, {
+      url: `https://lichess.org/${gameId}/black`,
+    });
+    await chrome.storage.session.remove(key);
+  } catch {} finally {
+    orientationRedirectsInProgress.delete(tabId);
+  }
+}
+
 chrome.tabs.onRemoved.addListener((tabId) => {
-  void chrome.storage.session.remove(pendingImportKey(tabId));
+  void chrome.storage.session.remove([
+    pendingImportKey(tabId),
+    pendingImportOrientationKey(tabId),
+  ]);
 });

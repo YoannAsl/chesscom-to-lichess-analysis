@@ -27,6 +27,7 @@ Run each action on a supported game.
 - [ ] The review button fills Lichess's PGN textarea.
 - [ ] The review button selects **Request a computer analysis**.
 - [ ] The review button clicks **Import game**.
+- [ ] The review board puts the configured player's side at the bottom.
 - [ ] The browser context menu shows **Analyze on Lichess**.
 - [ ] The context-menu item starts a handoff.
 - [ ] Repeated clicks during a handoff open only one Lichess tab.
