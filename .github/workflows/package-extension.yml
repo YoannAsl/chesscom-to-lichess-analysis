@@ -7,7 +7,7 @@ on:
       - 'v*'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   package:
@@ -50,3 +50,16 @@ jobs:
           name: chesscom-to-lichess-analysis-${{ steps.extension.outputs.version }}
           path: chesscom-to-lichess-analysis-${{ steps.extension.outputs.version }}.zip
           if-no-files-found: error
+
+      - name: Create GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_VERSION: ${{ steps.extension.outputs.version }}
+          ZIP_NAME: chesscom-to-lichess-analysis-${{ steps.extension.outputs.version }}.zip
+        run: |
+          gh release create "$RELEASE_TAG" "$ZIP_NAME" \
+            --verify-tag \
+            --title "Chess.com to Lichess $RELEASE_VERSION" \
+            --generate-notes
