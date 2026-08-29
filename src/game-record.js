@@ -135,10 +135,10 @@
 
   function createLichessAnalysisUrl(cleanPgn, color) {
     const analysisUrl = `https://lichess.org/analysis/pgn/${encodeURIComponent(cleanPgn)}`;
+    const colorQuery =
+      color === "white" || color === "black" ? `?color=${color}` : "";
 
-    return color === "white" || color === "black"
-      ? `${analysisUrl}?color=${color}`
-      : analysisUrl;
+    return `${analysisUrl}${colorQuery}#0`;
   }
 
   const api = Object.freeze({

@@ -38,7 +38,7 @@ default view.
 5. Reject a game whose result is `*`, whose rules are not standard chess, or whose PGN is missing.
 6. Remove Chess.com review notes, annotations, and clock data if present.
 7. Match the saved Chess.com username to the White or Black player when possible.
-8. Open `https://lichess.org/analysis/pgn/{encoded PGN}` in a new active tab, with the matching side at the bottom.
+8. Open `https://lichess.org/analysis/pgn/{encoded PGN}#0` in a new active tab, starting at the first position with the matching side at the bottom.
 9. Show a short on-page error and open no tab when a check fails.
 
 The Share panel may appear for a moment during the handoff.

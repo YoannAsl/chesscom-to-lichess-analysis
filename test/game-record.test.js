@@ -104,7 +104,7 @@ test("normalizes repeated black move numbers from Chess.com PGNs", () => {
 test("encodes the clean game record in a Lichess analysis URL", () => {
   assert.equal(
     createLichessAnalysisUrl(FINISHED_STANDARD_PGN),
-    `https://lichess.org/analysis/pgn/${encodeURIComponent(FINISHED_STANDARD_PGN)}`,
+    `https://lichess.org/analysis/pgn/${encodeURIComponent(FINISHED_STANDARD_PGN)}#0`,
   );
 });
 
@@ -118,14 +118,14 @@ test("uses the default orientation when the configured player is absent", () => 
   assert.equal(findPlayerColor(FINISHED_STANDARD_PGN, ""), undefined);
   assert.equal(
     createLichessAnalysisUrl(FINISHED_STANDARD_PGN, undefined),
-    `https://lichess.org/analysis/pgn/${encodeURIComponent(FINISHED_STANDARD_PGN)}`,
+    `https://lichess.org/analysis/pgn/${encodeURIComponent(FINISHED_STANDARD_PGN)}#0`,
   );
 });
 
 test("adds the configured player's color to the Lichess analysis URL", () => {
   assert.equal(
     createLichessAnalysisUrl(FINISHED_STANDARD_PGN, "black"),
-    `https://lichess.org/analysis/pgn/${encodeURIComponent(FINISHED_STANDARD_PGN)}?color=black`,
+    `https://lichess.org/analysis/pgn/${encodeURIComponent(FINISHED_STANDARD_PGN)}?color=black#0`,
   );
 });
 
