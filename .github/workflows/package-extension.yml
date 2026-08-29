@@ -28,7 +28,9 @@ jobs:
       - name: Read extension version
         id: extension
         shell: bash
-        run: echo "version=$(node -p \"require('./manifest.json').version\")" >> "$GITHUB_OUTPUT"
+        run: |
+          version="$(node -p "require('./manifest.json').version")"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
 
       - name: Create Chrome Web Store zip
         shell: bash
