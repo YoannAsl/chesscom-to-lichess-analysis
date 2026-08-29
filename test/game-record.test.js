@@ -92,6 +92,15 @@ Nc6 ; review note
   assert.equal(cleanGameRecord(annotatedPgn), FINISHED_STANDARD_PGN);
 });
 
+test("normalizes repeated black move numbers from Chess.com PGNs", () => {
+  const chessComPgn = FINISHED_STANDARD_PGN.replace(
+    "1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 1-0",
+    "1. e4 1... e5 2. Nf3 2... Nc6 3. Bb5 3... a6 1-0",
+  );
+
+  assert.equal(cleanGameRecord(chessComPgn), FINISHED_STANDARD_PGN);
+});
+
 test("encodes the clean game record in a Lichess analysis URL", () => {
   assert.equal(
     createLichessAnalysisUrl(FINISHED_STANDARD_PGN),

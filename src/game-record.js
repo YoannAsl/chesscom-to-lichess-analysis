@@ -67,6 +67,7 @@
     return cleanMoves
       .replace(/\$\d+/g, "")
       .replace(/[!?]+/g, "")
+      .replace(/\d+\.\.\.\s*/g, "")
       .replace(/\s+/g, " ")
       .trim();
   }
